@@ -25,8 +25,8 @@ jobs:
       - name: Install Hyper8
         run: |
           # Download and install Hyper8 for Linux
-          wget https://codeberg.org/simonrepp/hyper8/releases/download/v0.22.0/hyper8_0.22.0_amd64.deb
-          sudo dpkg -i hyper8_0.22.0_amd64.deb
+          wget https://simonrepp.com/hyper8/packages/hyper8_0.22.0-1+deb12_amd64.deb
+          sudo dpkg -i hyper8_0.22.0-1+deb12_amd64.deb
           
       - name: Verify Hyper8 installation
         run: hyper8 --version
