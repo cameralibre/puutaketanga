@@ -1,0 +1,6 @@
+base_url: https://cameralibre.github.io/puutaketanga
+language: mi
+theme: adaptive_neutral
+
+ftp_config:
+mode = secure

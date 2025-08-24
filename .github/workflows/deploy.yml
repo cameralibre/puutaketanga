@@ -1,0 +1,65 @@
+name: Deploy Hyper8 to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Install Hyper8
+        run: |
+          # Download and install Hyper8 for Linux
+          wget https://codeberg.org/simonrepp/hyper8/releases/download/v0.22.0/hyper8_0.22.0_amd64.deb
+          sudo dpkg -i hyper8_0.22.0_amd64.deb
+          
+      - name: Verify Hyper8 installation
+        run: hyper8 --version
+        
+      - name: Build Hyper8 site
+        run: |
+          # Build the site using Hyper8's --build flag
+          # This creates output in .hyper8_build/ directory by default
+          hyper8 . --build
+          
+      - name: Prepare build output for GitHub Pages
+        run: |
+          # Add .nojekyll to prevent Jekyll processing
+          touch .hyper8_build/.nojekyll
+          # Verify the build was successful
+          ls -la .hyper8_build/
+        
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.hyper8_build'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
